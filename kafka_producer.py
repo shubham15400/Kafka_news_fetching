@@ -1,28 +1,23 @@
-import requests
-from confluent_kafka import Producer
 from newsapi import NewsApiClient
+import json
+from kafka import KafkaProducer
 
-# Replace with your Kafka bootstrap server
-bootstrap_servers = "localhost:9092"
+# Get your free API key from https://newsapi.org/, just need to sign up for an account
+key = "56ba1070c68b4258a0bb25638215c516"
 
-# Create a Kafka producer to send data
-kafka_producer = Producer({'bootstrap.servers': bootstrap_servers})
-def produce_message(topic, message):
-    kafka_producer.produce(topic=topic, value=message.encode())
-
-# Initialize API endpoint
-newsapi = NewsApiClient(api_key="56ba1070c68b4258a0bb25638215c516")
+# Initialize api endpoint
+newsapi = NewsApiClient(api_key=key)
 
 # Define the list of media sources
-sources = 'bbc-news,cnn,fox-news,nbc-news,the-guardian-uk,the-new-york-times,the-washington-post,usa-today,independent,daily-mail,hindustan-times'
+sources = 'bbc-news,cnn,fox-news,nbc-news,the-guardian-uk,the-new-york-times,the-washington-post,usa-today,independent,daily-mail'
 
-# /v2/everything - note there are other parameters you can set
-all_articles = newsapi.get_everything(q='Canada', #  Search query term (optional)
-                                      sources=sources, # List of identifiers (IDs) for the
-                                      language='en') # The 2-letter ISO code of the language
+# /v2/everything
+all_articles = newsapi.get_everything(q='france',
+                                      sources=sources,
+                                      language='en')
 
 # Print the titles of the articles
 for article in all_articles['articles']:
-    produce_message('news-topic', article['title'])
-
-kafka_producer.flush()
+    print(article['title'])
+    producer = KafkaProducer(bootstrap_servers='localhost:9092', api_version=(0, 10, 1))
+    producer.send('my-news', json.dumps(article).encode('utf-8'))

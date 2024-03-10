@@ -27,7 +27,7 @@ import json
 from kafka import KafkaProducer
 
 # Get your free API key from https://newsapi.org/, just need to sign up for an account
-key = "a9c085019beb46bd86d95c9c46487c62"
+key = "56ba1070c68b4258a0bb25638215c516"
 
 # Initialize api endpoint
 newsapi = NewsApiClient(api_key=key)
@@ -43,5 +43,5 @@ all_articles = newsapi.get_everything(q='france',
 # Print the titles of the articles
 for article in all_articles['articles']:
     print(article['title'])
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    producer = KafkaProducer(bootstrap_servers='localhost:9092', api_version=(0, 10, 1))
     producer.send('my-news', json.dumps(article).encode('utf-8'))
