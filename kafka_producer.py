@@ -12,7 +12,7 @@ newsapi = NewsApiClient(api_key=key)
 sources = 'bbc-news,cnn,fox-news,nbc-news,the-guardian-uk,the-new-york-times,the-washington-post,usa-today,independent,daily-mail'
 
 # /v2/everything
-all_articles = newsapi.get_everything(q='france',
+all_articles = newsapi.get_everything(q='Canada',
                                       sources=sources,
                                       language='en')
 
@@ -20,4 +20,4 @@ all_articles = newsapi.get_everything(q='france',
 for article in all_articles['articles']:
     print(article['title'])
     producer = KafkaProducer(bootstrap_servers='localhost:9092', api_version=(0, 10, 1))
-    producer.send('my-news', json.dumps(article).encode('utf-8'))
+    producer.send('news', json.dumps(article['title']).encode('utf-8'))
