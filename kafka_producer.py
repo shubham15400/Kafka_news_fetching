@@ -19,5 +19,5 @@ all_articles = newsapi.get_everything(q='Canada',
 # Print the titles of the articles
 for article in all_articles['articles']:
     print(article['title'])
-    producer = KafkaProducer(bootstrap_servers='localhost:9092', api_version=(0, 10, 1))
-    producer.send('news', json.dumps(article['title']).encode('utf-8'))
+    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    producer.send('news', json.dumps(article['title']))
