@@ -1,6 +1,6 @@
-import csv
-from kafka import KafkaConsumer
 import json
+from kafka import KafkaConsumer
+from datetime import datetime
 
 # Kafka broker configuration
 bootstrap_servers = 'localhost:9092'
@@ -8,33 +8,36 @@ bootstrap_servers = 'localhost:9092'
 # Create Kafka Consumer instance
 consumer = KafkaConsumer('news-topic', bootstrap_servers=bootstrap_servers)
 
-# Define the CSV file path
-csv_file_path = 'output.csv'
+# Define the JSON file path
+json_file_path = 'output.json'
 
-# Specify the keys you want to store in the CSV
-selected_keys = ['author', 'title', 'description', 'content', 'publishedAt']  # Column names to be extracted
+# Specify the keys you want to store in the JSON
+selected_keys = ['author', 'title', 'description', 'content', 'publishedAt']  # Keys to be extracted
 
-# Open the CSV file in write mode
-with open(csv_file_path, 'w', newline='') as csvfile:
-    # Create a CSV writer object
-    csv_writer = csv.writer(csvfile)
-
-    # Write header to the CSV file
-    csv_writer.writerow(selected_keys)
-
+# Open the JSON file in write mode
+with open(json_file_path, 'w') as jsonfile:
     # Poll for new messages
-    for messages in consumer:
-        message = json.loads(messages.value.decode('utf-8'))
+    for message in consumer:
+        message_data = json.loads(message.value.decode('utf-8'))
+
+        published_at_str = message_data.get('publishedAt', '')
+        if published_at_str:
+            try:
+                published_at_dt = datetime.strptime(published_at_str, '%Y-%m-%dT%H:%M:%SZ')
+                message_data['publishedAt'] = published_at_dt.timestamp()
+            except ValueError as e:
+                print(f"Error parsing publishedAt: {e}")
+                # Optionally, you can handle the error or skip this message
+                continue
 
         # Extract selected key-value pairs
-        row = [message.get(key, '') for key in selected_keys]
+        filtered_data = {key: message_data.get(key, '') for key in selected_keys}
 
-        # Write the row to the CSV file
-        csv_writer.writerow(row)
+        # Write the data to the JSON file
+        json.dump(filtered_data, jsonfile)
+        jsonfile.write('\n')  # Write a new line for each JSON object
 
-        print(f"Received message: {message}")
+        print(f"Received message: {filtered_data}")
 
 # Close consumer
 consumer.close()
-
-print(f"CSV file '{csv_file_path}' has been created.")
