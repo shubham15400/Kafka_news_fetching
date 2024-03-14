@@ -1,7 +1,7 @@
 import json
 from kafka import KafkaConsumer
 from datetime import datetime
-import pandas as pd  # Import pandas library
+import pandas as pd
 
 # Kafka broker configuration
 bootstrap_servers = 'localhost:9092'
@@ -9,16 +9,16 @@ bootstrap_servers = 'localhost:9092'
 # Create Kafka Consumer instance
 consumer = KafkaConsumer('news-topic', bootstrap_servers=bootstrap_servers)
 
-# Define the keys you want to store in the DataFrame
+# Define the keys to store in the DataFrame
 selected_keys = ['author', 'title', 'description', 'content', 'publishedAt']
 
-# Create an empty list to store DataFrames
 df_list = []
 
-# Poll for new messages
+# Read messages from topic
 for message in consumer:
     message_data = json.loads(message.value.decode('utf-8'))
     
+    # Filter out unwanted data and create a new dictionary with selected keys only
     published_at_str = message_data.get('publishedAt', '')
     if published_at_str:
         try:
@@ -26,7 +26,6 @@ for message in consumer:
             message_data['publishedAt'] = published_at_dt.timestamp()
         except ValueError as e:
             print(f"Error parsing publishedAt: {e}")
-            # Optionally, you can handle the error or skip this message
             continue
 
     # Extract selected key-value pairs
@@ -36,13 +35,13 @@ for message in consumer:
     # Append DataFrame to df_list
     df_list.append(filtered_data)
 
-
-    # print(f"Received message: {filtered_data}")
+    # Break out of loop after the messages are received.
+    # The loop breaks when there is no more message available on the topic after the set time.
     if not consumer.poll(timeout_ms=6000):
         print('no messages available, stopping consumer')
         break
 df = pd.DataFrame(df_list)
-df = df.replace({',':''}, regex=True)
+df = df.replace({',':''}, regex=True) # Remove commas from the content so as not to interfere with hive delimiter.
 print(df)
 df.to_csv('output.csv', index=False)
 # Close consumer
