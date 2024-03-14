@@ -42,7 +42,6 @@ for message in consumer:
         break
 df = pd.DataFrame(df_list)
 df = df.replace({',':''}, regex=True) # Remove commas from the content so as not to interfere with hive delimiter.
-df = df[df["title"].str.contains("[Removed]") == False] # Removings rows whose values are deleted.
 print(df)
 df.to_csv('output.csv', index=False)
 # Close consumer
