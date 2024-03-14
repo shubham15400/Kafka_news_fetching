@@ -5,3 +5,12 @@ received by a Kafka consumer. The data is manipulated and stored in a comma-sepa
 The CSV file is then stored in the hdfs folder. The file is later accessed by HIVE, where several aggregation functions are used.<br>
 <h2>HIVE table</h2>
 The hive table stores the columns from the HDFS folder's CSV file. The following is the query to create the table:<br>
+CREATE EXTERNAL TABLE IF NOT EXISTS news_shubham (<br>
+  author <strong>STRING</strong>,<br>
+  title strong>STRING</strong>,<br>
+  description strong>STRING</strong>,<br>
+  content strong>STRING</strong>,<br>
+  publishedAt strong>STRING</strong>)<br>
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','<br>
+LOCATION '/BigData/hive/'<br>
+TBLPROPERTIES('skip.header.line.count'='1');<br>
