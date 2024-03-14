@@ -7,7 +7,7 @@ import pandas as pd
 bootstrap_servers = 'localhost:9092'
 
 # Create Kafka Consumer instance
-consumer = KafkaConsumer('news-topic', bootstrap_servers=bootstrap_servers)
+consumer = KafkaConsumer('shubham_news-topic', bootstrap_servers=bootstrap_servers)
 
 # Define the keys to store in the DataFrame
 selected_keys = ['author', 'title', 'description', 'content', 'publishedAt']

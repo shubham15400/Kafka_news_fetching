@@ -19,4 +19,4 @@ all_articles = newsapi.get_everything(q='Canada', #  Search query term
 for article in all_articles['articles']:
     print(article)
     producer = KafkaProducer(bootstrap_servers='localhost:9092')
-    producer.send('news-topic', json.dumps(article).encode('utf-8'))
+    producer.send('shubham_news-topic', json.dumps(article).encode('utf-8'))
