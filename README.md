@@ -7,10 +7,10 @@ The CSV file is then stored in the hdfs folder. The file is later accessed by HI
 The hive table stores the columns from the HDFS folder's CSV file. The following is the query to create the table:<br>
 CREATE EXTERNAL TABLE IF NOT EXISTS news_shubham (<br>
   author <strong>STRING</strong>,<br>
-  title strong>STRING</strong>,<br>
-  description strong>STRING</strong>,<br>
-  content strong>STRING</strong>,<br>
-  publishedAt strong>STRING</strong>)<br>
+  title <strong>STRING</strong>,<br>
+  description <strong>STRING</strong>,<br>
+  content <strong>STRING</strong>,<br>
+  publishedAt <strong>STRING</strong>)<br>
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','<br>
 LOCATION '/BigData/hive/'<br>
 TBLPROPERTIES('skip.header.line.count'='1');<br>
