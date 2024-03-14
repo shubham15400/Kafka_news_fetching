@@ -4,7 +4,8 @@ In this project, the data is extracted from the API of https://newsapi.org/, and
 received by a Kafka consumer. The data is manipulated and stored in a comma-separated value(.csv) file. This file is stored in the local system. I use <strong>Google Cloud Platform</strong> for this project, which has HDFS and HIVE pre-installed.<br>
 The CSV file is then stored in the hdfs folder. The file is later accessed by HIVE, where several aggregation functions are used.<br>
 <h2>HIVE table</h2>
-The hive table stores the columns from the HDFS folder's CSV file. The following is the query to create the table:<br>
+The hive table stores the columns from the HDFS folder's CSV file. The following is the query to create the table:<be>
+<br>
 CREATE EXTERNAL TABLE IF NOT EXISTS news_shubham (<br>
   author <strong>STRING</strong>,<br>
   title <strong>STRING</strong>,<br>
